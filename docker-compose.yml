@@ -1,6 +1,6 @@
 services:
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.13.0
     ports:
       - "6333:6333"
       - "6334:6334"
@@ -27,8 +27,11 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+      - ./ollama-entrypoint.sh:/opt/ollama-entrypoint.sh:ro
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
+    entrypoint: /bin/bash
+    command: /opt/ollama-entrypoint.sh
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 30s
@@ -38,9 +41,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G
+          memory: 10G
         reservations:
-          memory: 5G
+          memory: 8G
 
   backend:
     build:
@@ -70,9 +73,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 3G
         reservations:
-          memory: 1.5G
+          memory: 2.5G
 
   frontend:
     build:
